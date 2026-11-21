@@ -9,16 +9,10 @@ pub struct App {
 
 impl App {
     fn new(cc: &eframe::CreationContext) -> Self {
-        cc.egui_ctx.set_pixels_per_point(1.2);
-        cc.egui_ctx.set_visuals(egui::Visuals {
-            window_corner_radius: CornerRadius::same(8),
-            menu_corner_radius: CornerRadius::same(8),
-            striped: true,
-            image_loading_spinners: true,
-            ..egui::Visuals::light()
-        });
+        let app = Self::default();
+        app.set_theme(&cc.egui_ctx);
 
-        App::default()
+        app
     }
 
     fn set_theme(&self, ctx: &egui::Context) {
@@ -27,7 +21,7 @@ impl App {
         } else {
             egui::Visuals::light()
         };
-        // ctx.set_pixels_per_point(1.2);
+        ctx.set_pixels_per_point(1.2);
         ctx.set_visuals(egui::Visuals {
             window_corner_radius: CornerRadius::same(8),
             menu_corner_radius: CornerRadius::same(8),
@@ -35,28 +29,36 @@ impl App {
             image_loading_spinners: true,
             ..theme
         });
+
+        ctx.all_styles_mut(|style| {
+            style.spacing.indent = 10.0;
+            style.spacing.menu_margin = Margin::same(5);
+            style.spacing.window_margin = Margin::same(5);
+            style.spacing.item_spacing = Vec2::new(10.0, 5.0);
+        });
     }
 
     fn top_bar(&mut self, ui: &mut egui::Ui) {
-        egui::Panel::top("top_panel").show(ui, |ui| {
-            if ui.button("Salir").clicked() {
-                ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close)
-            }
+        let mut frame = egui::frame::Frame::central_panel(ui.style());
+        frame.inner_margin = Margin::same(10);
+        egui::Panel::top("top_panel").frame(frame).show(ui, |ui| {
+            ui.horizontal_wrapped(|ui| {
+                if ui.button("Salir").clicked() {
+                    ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close)
+                }
 
-            if ui.checkbox(&mut self.dark_mode, "Modo oscuro").clicked() {
-                self.set_theme(ui.ctx());
-            }
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    if ui.checkbox(&mut self.dark_mode, "Modo oscuro").clicked() {
+                        self.set_theme(ui.ctx());
+                    }
+                });
+            });
         });
     }
 }
 
 impl eframe::App for App {
     fn ui(&mut self, ui: &mut eframe::egui::Ui, _frame: &mut eframe::Frame) {
-        ui.style_mut().spacing.indent = 10.0;
-        ui.style_mut().spacing.menu_margin = Margin::same(5);
-        ui.style_mut().spacing.window_margin = Margin::same(5);
-        ui.style_mut().spacing.item_spacing = Vec2::new(10.0, 5.0);
-
         self.top_bar(ui);
 
         egui::CentralPanel::default_margins().show(ui, |ui| {
