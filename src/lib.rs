@@ -1,5 +1,3 @@
-use view::login;
-
 pub mod view {
     pub mod login;
 }
