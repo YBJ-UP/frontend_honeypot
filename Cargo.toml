@@ -1,0 +1,19 @@
+[package]
+name = "frontend_honeypot"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+egui = "0.37.0"
+egui_extras = "0.37.0"
+egui_plot = "0.38.0"
+keyring = "4.2.0"
+reqwest = { version = "0.13.5", features = ["json"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+strum = "0.28.0"
+strum_macros = "0.28.0"
+time = { version = "0.3.55", features = ["serde"] }
+tokio = { version = "1.54.1", features = ["full"] }
+tracing = "0.1.44"
+uuid = { version = "1.29.3", features = ["serde"] }
