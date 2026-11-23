@@ -1,3 +1,5 @@
+use std::sync::mpsc::Receiver;
+
 use crate::view::login::login_view;
 use eframe::egui::{self, Color32, CornerRadius, Margin, Vec2};
 
@@ -29,7 +31,9 @@ pub struct App {
     pub current_view: Views,
     pub user: String,
     pub password: String,
+    pub api_url: String,
     pub login_status: LoginStatus,
+    pub login_rx: Option<Receiver<Result<String, String>>>,
 }
 
 impl App {
