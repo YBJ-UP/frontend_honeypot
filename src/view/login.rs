@@ -6,6 +6,9 @@ use serde::{Deserialize, Serialize};
 use tokio::spawn;
 
 pub fn login_view(app: &mut App, ui: &mut egui::Ui) {
+    if let LoginStatus::LoggedIn(_) = app.login_status {
+        app.current_view = Views::MainDashboard;
+    }
     let t =
         ui.ctx()
             .animate_bool_with_time(egui::Id::unique("theme_transition"), app.dark_mode, 0.25);

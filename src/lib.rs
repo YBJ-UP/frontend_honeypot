@@ -1,9 +1,10 @@
 use std::sync::mpsc::Receiver;
 
-use crate::view::login::login_view;
+use crate::view::{dashboard::dashboard_view, login::login_view};
 use eframe::egui::{self, Color32, CornerRadius, Margin, Vec2};
 
 pub mod view {
+    pub mod dashboard;
     pub mod login;
 }
 
@@ -73,7 +74,7 @@ impl App {
         let mut dark = egui::Visuals::dark();
 
         light.panel_fill = Color32::from_rgb(230, 230, 230);
-        dark.panel_fill = Color32::from_rgb(30, 30, 30);
+        dark.panel_fill = Color32::from_rgb(50, 50, 50);
 
         // Si ya terminó la transición, usa los visuales directos sin calcular interpolación
         let visuals = if t <= 0.0 {
@@ -125,6 +126,9 @@ impl eframe::App for App {
         egui::CentralPanel::default_margins().show(ui, |ui| {
             match self.current_view {
                 Views::Login => login_view(self, ui),
+                Views::MainDashboard => {
+                    dashboard_view(self, ui);
+                }
                 _ => {
                     ui.label("lol");
                 }
