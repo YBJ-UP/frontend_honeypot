@@ -1,7 +1,7 @@
 use std::sync::mpsc;
 
 use crate::{App, LoginStatus, Views};
-use eframe::egui::{self, CornerRadius, Margin, RichText, frame};
+use eframe::egui::{self, Color32, CornerRadius, Margin, RichText, frame};
 use tokio::spawn;
 
 pub fn login_view(app: &mut App, ui: &mut egui::Ui) {
@@ -53,6 +53,8 @@ pub fn login_view(app: &mut App, ui: &mut egui::Ui) {
                 let pw_enter_pressed =
                     pw_field.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter));
 
+                ui.add_space(20.0);
+
                 ui.add_enabled_ui(
                     matches!(
                         app.login_status,
@@ -68,17 +70,29 @@ pub fn login_view(app: &mut App, ui: &mut egui::Ui) {
                             let (tx, rx) = mpsc::channel();
                             app.login_rx = Some(rx);
 
-                            let api_url = app.api_url.clone();
+                            let api_url = app.api_url;
                             let username = app.user.clone();
                             let password = app.password.clone();
 
                             spawn(async move {
-                                let result = login(&api_url, &username, &password).await;
+                                let result = login(api_url, &username, &password).await;
                                 let _ = tx.send(result);
                             });
                         }
                     },
                 );
+
+                match &app.login_status {
+                    LoginStatus::Loading => {
+                        ui.add_space(10.0);
+                        ui.spinner();
+                    }
+                    LoginStatus::Failed(msg) => {
+                        ui.add_space(10.0);
+                        ui.colored_label(Color32::RED, msg);
+                    }
+                    _ => {}
+                }
             });
     });
 }
