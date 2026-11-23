@@ -25,15 +25,29 @@ pub enum Views {
     Details,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct App {
     pub dark_mode: bool,
     pub current_view: Views,
     pub user: String,
     pub password: String,
-    pub api_url: String,
+    pub api_url: &'static str,
     pub login_status: LoginStatus,
     pub login_rx: Option<Receiver<Result<String, String>>>,
+}
+
+impl Default for App {
+    fn default() -> Self {
+        App {
+            dark_mode: true,
+            api_url: option_env!("API_KEY").unwrap_or("http://localhost:8000"),
+            current_view: Views::default(),
+            user: String::default(),
+            password: String::default(),
+            login_status: LoginStatus::NotLoggedIn,
+            login_rx: None,
+        }
+    }
 }
 
 impl App {
