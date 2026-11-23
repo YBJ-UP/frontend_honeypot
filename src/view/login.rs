@@ -2,6 +2,7 @@ use std::sync::mpsc;
 
 use crate::{App, LoginStatus, Views};
 use eframe::egui::{self, Color32, CornerRadius, Margin, RichText, frame};
+use serde::{Deserialize, Serialize};
 use tokio::spawn;
 
 pub fn login_view(app: &mut App, ui: &mut egui::Ui) {
@@ -97,7 +98,43 @@ pub fn login_view(app: &mut App, ui: &mut egui::Ui) {
     });
 }
 
-async fn login(_url: &str, _user: &str, _pw: &str) -> Result<String, String> {
-    let _client = reqwest::Client::new();
-    Err("No implementado".to_string())
+#[derive(Serialize, Deserialize)]
+struct Credentials<'a> {
+    name: &'a str,
+    password: &'a str,
+}
+
+#[derive(Serialize, Deserialize)]
+struct ApiLoginResponse {
+    key: String,
+}
+
+async fn login(url: &str, user: &str, pw: &str) -> Result<String, String> {
+    let client = reqwest::Client::new();
+    let credentials = Credentials {
+        name: user,
+        password: pw,
+    };
+
+    let url = format!("{}/api/v1/auth/login", url);
+
+    let res = client
+        .post(&url)
+        .json(&credentials)
+        .send()
+        .await
+        .map_err(|e| format!("Error de conexión: {e}"))?;
+
+    if res.status().is_success() {
+        let data: ApiLoginResponse = res
+            .json()
+            .await
+            .map_err(|e| format!("Error en la respuesta del servidor: {}", e))?;
+
+        Ok(data.key)
+    } else if res.status() == 401 || res.status() == 403 {
+        Err("Usuario o contraseña inválidos".to_string())
+    } else {
+        Err(format!("Error del servidor ({})", res.status()))
+    }
 }
