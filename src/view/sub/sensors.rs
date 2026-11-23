@@ -14,7 +14,7 @@ use crate::{
 };
 
 const AUTO_REFRESH: Duration = Duration::from_secs(10);
-const CARD_WIDTH: f32 = 280.0;
+const CARD_WIDTH: f32 = 580.0;
 const ONLINE: egui::Color32 = egui::Color32::from_rgb(80, 200, 120);
 
 pub fn sensors_view(app: &mut App, ui: &mut egui::Ui) {
@@ -72,7 +72,7 @@ pub fn sensors_view(app: &mut App, ui: &mut egui::Ui) {
         .auto_shrink([false, false])
         .show(ui, |ui| {
             for chunk in sensors.chunks(columns) {
-                ui.horizontal_top(|ui| {
+                ui.vertical_centered(|ui| {
                     for sensor in chunk {
                         sensor_card(ui, sensor);
                     }
@@ -109,7 +109,7 @@ fn sensor_card(ui: &mut egui::Ui, s: &Sensor) {
         ui.set_width(CARD_WIDTH);
 
         ui.horizontal(|ui| {
-            ui.colored_label(color, "●");
+            ui.colored_label(color, "*");
             ui.label(egui::RichText::new(&s.name).heading());
         });
         ui.colored_label(color, status);
