@@ -49,3 +49,14 @@ pub fn fmt_ts(ts: f64) -> String {
         })
         .unwrap_or_else(|| "—".to_string())
 }
+
+/// Segundos -> "42 s", "15 min", "3 h 20 min", "2 d 4 h".
+pub fn fmt_duration(secs: f64) -> String {
+    let s = secs.max(0.0) as u64;
+    match s {
+        0..=59 => format!("{s} s"),
+        60..=3599 => format!("{} min", s / 60),
+        3600..=86399 => format!("{} h {} min", s / 3600, (s % 3600) / 60),
+        _ => format!("{} d {} h", s / 86400, (s % 86400) / 3600),
+    }
+}

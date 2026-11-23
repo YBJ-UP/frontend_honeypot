@@ -2,7 +2,7 @@ use eframe::egui::{self, Margin};
 
 use crate::{
     App, DashboardTab,
-    view::sub::{attacks::attacks_view, reports::reports_view},
+    view::sub::{attacks::attacks_view, reports::reports_view, stats::stats_view},
 };
 
 pub fn dashboard_view(app: &mut App, ui: &mut egui::Ui) {
@@ -15,6 +15,7 @@ pub fn dashboard_view(app: &mut App, ui: &mut egui::Ui) {
         .show(ui, |ui| match &app.current_tab {
             DashboardTab::Ataques => attacks_view(app, ui),
             DashboardTab::Reportes => reports_view(app, ui),
+            DashboardTab::Estadisticas => stats_view(app, ui),
             _ => {}
         });
 }
