@@ -60,3 +60,13 @@ pub fn fmt_duration(secs: f64) -> String {
         _ => format!("{} d {} h", s / 86400, (s % 86400) / 3600),
     }
 }
+
+/// "brute_force" -> "Brute force".
+pub fn type_label(key: &str) -> String {
+    let spaced = key.replace('_', " ");
+    let mut chars = spaced.chars();
+    match chars.next() {
+        Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
+        None => String::new(),
+    }
+}

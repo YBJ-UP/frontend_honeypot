@@ -59,6 +59,7 @@ fn side_panel(app: &mut App, ui: &mut egui::Ui) {
                             app.password.clear();
                             app.attack = Default::default();
                             app.report = Default::default();
+                            app.stats = Default::default();
                         }
                         let user = if app.user.is_empty() {
                             "Admin"

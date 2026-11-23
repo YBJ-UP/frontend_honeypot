@@ -7,7 +7,7 @@ use crate::{
     App,
     api::get_json,
     model::stats::SensorCompare,
-    view::widgets::{bar_row, fmt_duration, severity_color},
+    view::widgets::{bar_row, fmt_duration, severity_color, type_label},
 };
 
 pub fn stats_view(app: &mut App, ui: &mut egui::Ui) {
@@ -122,7 +122,11 @@ fn metrics_table(ui: &mut egui::Ui, sensors: &[SensorCompare]) {
         .body(|mut body| {
             // Contadores: en negrita el valor más alto de la fila
             for (label, hint, get) in count_rows {
-                let max = sensors.iter().map(|s| get(s)).max().unwrap_or(0);
+                let max = sensors
+                    .iter()
+                    .map(|s: &SensorCompare| get(s))
+                    .max()
+                    .unwrap_or(0);
                 body.row(24.0, |mut row| {
                     row.col(|ui| {
                         ui.label(label).on_hover_text(hint);
@@ -214,16 +218,6 @@ fn types_breakdown(ui: &mut egui::Ui, sensors: &[SensorCompare]) {
             let count = s.by_type.get(kind).copied().unwrap_or(0);
             bar_row(ui, &s.sensor, count, max, None);
         }
-    }
-}
-
-/// "brute_force" -> "Brute force". Cámbialo por un match con TYPE_LABELS si lo prefieres.
-fn type_label(key: &str) -> String {
-    let spaced = key.replace('_', " ");
-    let mut chars = spaced.chars();
-    match chars.next() {
-        Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
-        None => String::new(),
     }
 }
 
