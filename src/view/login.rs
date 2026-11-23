@@ -17,17 +17,26 @@ pub fn login_view(app: &mut App, ui: &mut egui::Ui) {
             .corner_radius(CornerRadius::same(16))
             .show(ui, |ui| {
                 ui.set_width(300.0);
+
                 ui.heading(RichText::new("¡Bienvenido de vuelta!").strong());
+
                 ui.add_space(20.0);
-                ui.with_layout(Layout::left_to_right(egui::Align::Min), |ui| {
-                    ui.label("Usuario:");
-                });
-                ui.text_edit_singleline(&mut app.user);
+
+                ui.add(egui::TextEdit::singleline(&mut app.user).hint_text("Usuario"));
+
                 ui.add_space(10.0);
-                ui.with_layout(Layout::left_to_right(egui::Align::Min), |ui| {
-                    ui.label("Contraseña:");
-                });
-                ui.text_edit_singleline(&mut app.password)
+
+                if ui
+                    .add(
+                        egui::TextEdit::singleline(&mut app.password)
+                            .password(true)
+                            .hint_text("Contraseña"),
+                    )
+                    .lost_focus()
+                    && ui.input(|input| input.key_pressed(egui::Key::Enter))
+                {
+                    println!("LOL");
+                }
             });
     });
 }

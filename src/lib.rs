@@ -6,6 +6,15 @@ pub mod view {
 }
 
 #[derive(Debug, Default)]
+pub enum LoginStatus {
+    #[default]
+    NotLoggedIn,
+    Loading,
+    LoggedIn(String), // Llave
+    Failed(String),   // Razón de fallo
+}
+
+#[derive(Debug, Default)]
 pub enum Views {
     #[default]
     Login,
@@ -20,6 +29,7 @@ pub struct App {
     pub current_view: Views,
     pub user: String,
     pub password: String,
+    pub login_status: LoginStatus,
 }
 
 impl App {
