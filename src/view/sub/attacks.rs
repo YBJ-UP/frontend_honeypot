@@ -3,7 +3,7 @@ use egui_extras::{Column, TableBuilder};
 use std::sync::mpsc;
 use tokio::spawn;
 
-use crate::{App, model::attacks::Attack};
+use crate::{App, api::get_json};
 
 pub fn attacks_view(app: &mut App, ui: &mut egui::Ui) {
     if let Some(rx) = &app.attack.rx
@@ -31,7 +31,8 @@ pub fn attacks_view(app: &mut App, ui: &mut egui::Ui) {
                 let api_key = app.api_key.clone();
 
                 spawn(async move {
-                    let result = fetch_attacks(api_url, &api_key).await;
+                    let result =
+                        get_json(api_url, "/api/v1/attacks?status=all&limit=100", &api_key).await;
                     let _ = tx.send(result);
                 });
             }
@@ -116,25 +117,4 @@ pub fn attacks_view(app: &mut App, ui: &mut egui::Ui) {
                 });
             }
         });
-}
-
-async fn fetch_attacks(api_url: &str, api_key: &str) -> Result<Vec<Attack>, String> {
-    let client = reqwest::Client::new();
-    let url = format!("{}/api/v1/attacks?status=all&limit=100", api_url);
-
-    let response = client
-        .get(&url)
-        .header("X-Admin-Key", api_key) // O "Authorization": format!("Bearer {}", api_key) si migraste a JWT
-        .send()
-        .await
-        .map_err(|e| format!("Error de conexión: {}", e))?;
-
-    if response.status().is_success() {
-        response
-            .json::<Vec<Attack>>()
-            .await
-            .map_err(|e| format!("Error procesando JSON: {}", e))
-    } else {
-        Err(format!("Error del servidor: {}", response.status()))
-    }
 }

@@ -1,6 +1,9 @@
 use eframe::egui::{self, Margin};
 
-use crate::{App, DashboardTab, view::sub::attacks::attacks_view};
+use crate::{
+    App, DashboardTab,
+    view::sub::{attacks::attacks_view, reports::reports_view},
+};
 
 pub fn dashboard_view(app: &mut App, ui: &mut egui::Ui) {
     side_panel(app, ui);
@@ -11,7 +14,7 @@ pub fn dashboard_view(app: &mut App, ui: &mut egui::Ui) {
         .frame(frame)
         .show(ui, |ui| match &app.current_tab {
             DashboardTab::Ataques => attacks_view(app, ui),
-            DashboardTab::Reportes => {}
+            DashboardTab::Reportes => reports_view(app, ui),
             _ => {}
         });
 }
@@ -53,6 +56,8 @@ fn side_panel(app: &mut App, ui: &mut egui::Ui) {
                             app.login_status = crate::LoginStatus::NotLoggedIn;
                             app.user.clear();
                             app.password.clear();
+                            app.attack = Default::default();
+                            app.report = Default::default();
                         }
                         let user = if app.user.is_empty() {
                             "Admin"

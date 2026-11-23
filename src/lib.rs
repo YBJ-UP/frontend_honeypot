@@ -1,20 +1,25 @@
 use std::sync::mpsc::Receiver;
 
 use crate::{
-    model::attacks::AttackState,
+    model::{attacks::AttackState, report::ReportState},
     view::{dashboard::dashboard_view, login::login_view},
 };
 use eframe::egui::{self, Color32, CornerRadius, Margin, Vec2};
 
+pub mod api;
+
 pub mod model {
     pub mod attacks;
+    pub mod report;
 }
 
 pub mod view {
     pub mod dashboard;
     pub mod login;
+    pub mod widgets;
     pub mod sub {
         pub mod attacks;
+        pub mod reports;
     }
 }
 
@@ -57,6 +62,7 @@ pub struct App {
     pub login_rx: Option<Receiver<Result<String, String>>>,
     pub current_tab: DashboardTab,
     pub attack: AttackState,
+    pub report: ReportState,
 }
 
 impl Default for App {
@@ -72,6 +78,7 @@ impl Default for App {
             login_rx: None,
             current_tab: DashboardTab::default(),
             attack: AttackState::default(),
+            report: ReportState::default(),
         }
     }
 }
