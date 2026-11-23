@@ -1,11 +1,21 @@
 use std::sync::mpsc::Receiver;
 
-use crate::view::{dashboard::dashboard_view, login::login_view};
+use crate::{
+    model::attacks::AttackState,
+    view::{dashboard::dashboard_view, login::login_view},
+};
 use eframe::egui::{self, Color32, CornerRadius, Margin, Vec2};
+
+pub mod model {
+    pub mod attacks;
+}
 
 pub mod view {
     pub mod dashboard;
     pub mod login;
+    pub mod sub {
+        pub mod attacks;
+    }
 }
 
 #[derive(Debug, Default, PartialEq)]
@@ -13,8 +23,8 @@ pub enum LoginStatus {
     #[default]
     NotLoggedIn,
     Loading,
-    LoggedIn(String), // Llave
-    Failed(String),   // Razón de fallo
+    LoggedIn,       // Llave
+    Failed(String), // Razón de fallo
 }
 
 #[derive(Debug, Default)]
@@ -42,22 +52,26 @@ pub struct App {
     pub user: String,
     pub password: String,
     pub api_url: &'static str,
+    pub api_key: String,
     pub login_status: LoginStatus,
     pub login_rx: Option<Receiver<Result<String, String>>>,
     pub current_tab: DashboardTab,
+    pub attack: AttackState,
 }
 
 impl Default for App {
     fn default() -> Self {
         App {
             dark_mode: true,
-            api_url: option_env!("API_KEY").unwrap_or("http://localhost:8000"),
+            api_url: option_env!("API_URL").unwrap_or("http://localhost:8000"),
+            api_key: String::default(),
             current_view: Views::default(),
             user: String::default(),
             password: String::default(),
             login_status: LoginStatus::NotLoggedIn,
             login_rx: None,
             current_tab: DashboardTab::default(),
+            attack: AttackState::default(),
         }
     }
 }

@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use tokio::spawn;
 
 pub fn login_view(app: &mut App, ui: &mut egui::Ui) {
-    if let LoginStatus::LoggedIn(_) = app.login_status {
+    if let LoginStatus::LoggedIn = app.login_status {
         app.current_view = Views::MainDashboard;
     }
     let t =
@@ -23,7 +23,8 @@ pub fn login_view(app: &mut App, ui: &mut egui::Ui) {
             Ok(key) => {
                 app.login_rx = None;
                 app.password.clear();
-                app.login_status = LoginStatus::LoggedIn(key);
+                app.login_status = LoginStatus::LoggedIn;
+                app.api_key = key;
                 app.current_view = Views::MainDashboard;
             }
             Err(msg) => {

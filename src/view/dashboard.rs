@@ -1,8 +1,22 @@
 use eframe::egui::{self, Margin};
 
-use crate::{App, DashboardTab};
+use crate::{App, DashboardTab, view::sub::attacks::attacks_view};
 
 pub fn dashboard_view(app: &mut App, ui: &mut egui::Ui) {
+    side_panel(app, ui);
+
+    let frame = egui::frame::Frame::central_panel(ui.style()).inner_margin(Margin::same(20));
+
+    egui::CentralPanel::default()
+        .frame(frame)
+        .show(ui, |ui| match &app.current_tab {
+            DashboardTab::Ataques => attacks_view(app, ui),
+            DashboardTab::Reportes => {}
+            _ => {}
+        });
+}
+
+fn side_panel(app: &mut App, ui: &mut egui::Ui) {
     let mut frame = egui::frame::Frame::central_panel(ui.style());
     frame.inner_margin = Margin::same(0);
 
@@ -35,6 +49,11 @@ pub fn dashboard_view(app: &mut App, ui: &mut egui::Ui) {
                 egui::Frame::new()
                     .inner_margin(egui::Margin::same(15))
                     .show(ui, |ui| {
+                        if ui.button("Cerrar sesión").clicked() {
+                            app.login_status = crate::LoginStatus::NotLoggedIn;
+                            app.user.clear();
+                            app.password.clear();
+                        }
                         let user = if app.user.is_empty() {
                             "Admin"
                         } else {
@@ -45,11 +64,6 @@ pub fn dashboard_view(app: &mut App, ui: &mut egui::Ui) {
                                 .color(egui::Color32::DARK_GRAY)
                                 .size(12.0),
                         );
-                        if ui.button("Cerrar sesión").clicked() {
-                            app.login_status = crate::LoginStatus::NotLoggedIn;
-                            app.user.clear();
-                            app.password.clear();
-                        }
                     });
             });
         });
