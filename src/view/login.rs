@@ -28,7 +28,7 @@ pub fn login_view(app: &mut App, ui: &mut egui::Ui) {
                 app.current_view = Views::MainDashboard;
             }
             Err(msg) => {
-                app.login_status = LoginStatus::LoggedIn(msg);
+                app.login_status = LoginStatus::Failed(msg);
             }
         }
     }
