@@ -2,7 +2,9 @@ use eframe::egui::{self, Margin};
 
 use crate::{
     App, DashboardTab,
-    view::sub::{attacks::attacks_view, reports::reports_view, stats::stats_view},
+    view::sub::{
+        attacks::attacks_view, reports::reports_view, sensors::sensors_view, stats::stats_view,
+    },
 };
 
 pub fn dashboard_view(app: &mut App, ui: &mut egui::Ui) {
@@ -16,7 +18,7 @@ pub fn dashboard_view(app: &mut App, ui: &mut egui::Ui) {
             DashboardTab::Ataques => attacks_view(app, ui),
             DashboardTab::Reportes => reports_view(app, ui),
             DashboardTab::Estadisticas => stats_view(app, ui),
-            _ => {}
+            DashboardTab::Sensores => sensors_view(app, ui),
         });
 }
 
@@ -60,6 +62,7 @@ fn side_panel(app: &mut App, ui: &mut egui::Ui) {
                             app.attack = Default::default();
                             app.report = Default::default();
                             app.stats = Default::default();
+                            app.sensors = Default::default();
                         }
                         let user = if app.user.is_empty() {
                             "Admin"
