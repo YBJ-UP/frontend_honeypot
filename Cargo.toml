@@ -4,13 +4,11 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-eframe = { version = "0.37.0", features = ["wayland"] }
+eframe = { version = "0.37.0" }
 egui_extras = "0.37.0"
-egui_plot = "0.38.0"
 reqwest = { version = "0.13.5", features = ["json"] }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.154"
 time = { version = "0.3.55", features = ["serde"] }
 tokio = { version = "1.54.1", features = ["full"] }
-uuid = { version = "1.29.3", features = ["serde"] }
 chrono = { version = "0.4", default-features = false, features = ["clock"] }
