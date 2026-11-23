@@ -8,7 +8,7 @@ pub mod view {
     pub mod login;
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, PartialEq)]
 pub enum LoginStatus {
     #[default]
     NotLoggedIn,
@@ -26,6 +26,15 @@ pub enum Views {
     Details,
 }
 
+#[derive(Debug, Default, PartialEq)]
+pub enum DashboardTab {
+    #[default]
+    Ataques,
+    Reportes,
+    Estadisticas,
+    Sensores,
+}
+
 #[derive(Debug)]
 pub struct App {
     pub dark_mode: bool,
@@ -35,6 +44,7 @@ pub struct App {
     pub api_url: &'static str,
     pub login_status: LoginStatus,
     pub login_rx: Option<Receiver<Result<String, String>>>,
+    pub current_tab: DashboardTab,
 }
 
 impl Default for App {
@@ -47,6 +57,7 @@ impl Default for App {
             password: String::default(),
             login_status: LoginStatus::NotLoggedIn,
             login_rx: None,
+            current_tab: DashboardTab::default(),
         }
     }
 }
@@ -122,6 +133,10 @@ impl eframe::App for App {
     fn ui(&mut self, ui: &mut eframe::egui::Ui, _frame: &mut eframe::Frame) {
         self.set_theme(ui.ctx());
         self.top_bar(ui);
+
+        if self.login_status == LoginStatus::NotLoggedIn {
+            self.current_view = Views::Login
+        }
 
         egui::CentralPanel::default_margins().show(ui, |ui| {
             match self.current_view {

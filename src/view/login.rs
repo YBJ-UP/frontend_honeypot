@@ -21,12 +21,13 @@ pub fn login_view(app: &mut App, ui: &mut egui::Ui) {
     {
         match res {
             Ok(key) => {
+                app.login_rx = None;
                 app.password.clear();
                 app.login_status = LoginStatus::LoggedIn(key);
                 app.current_view = Views::MainDashboard;
             }
             Err(msg) => {
-                app.login_status = LoginStatus::Failed(msg);
+                app.login_status = LoginStatus::LoggedIn(msg);
             }
         }
     }
