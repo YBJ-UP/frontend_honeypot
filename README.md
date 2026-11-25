@@ -2,7 +2,7 @@
 
 Aplicación nativa de escritorio desarrollada en Rust utilizando egui, diseñada para la visualización y el monitoreo en tiempo real de los datos recolectados por un sistema honeypot.
 
-**Modo de solo lectura**: Esta aplicación está diseñada estrictamente para la consulta y visualización de información. No permite añadir, modificar ni eliminar ningún dato, configuración o registro del honeypot, garantizando la integridad de la evidencia recolectada.
+_**Modo de solo lectura**: Esta aplicación está diseñada estrictamente para la consulta y visualización de información. No permite añadir, modificar ni eliminar ningún dato, configuración o registro del honeypot, garantizando la integridad de la evidencia recolectada._
 
 ## Capacidades de la Aplicación
 
