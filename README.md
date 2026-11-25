@@ -44,8 +44,8 @@ API_URL=http://localhost:8000 cargo install --path .
 
 ## Alcance y Seguridad
 
-Esta herramienta funciona únicamente como un cliente de visualización:
+Esta herramienta funciona _únicamente_ como un cliente de visualización:
 
-Permitido: Consultar métricas, revisar el estado de los nodos/servidores y auditar direcciones IP maliciosas.
+- **Permitido**: Consultar métricas, revisar el estado de los nodos/servidores y auditar direcciones IP maliciosas.
 
-Restringido: Creación de registros, edición de estados, bloqueo activo de IPs o modificación de la configuración del honeypot.
+- **Restringido**: Creación de registros, edición de estados, bloqueo activo de IPs o modificación de la configuración del honeypot.
