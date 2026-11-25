@@ -18,9 +18,9 @@ Aplicación nativa de escritorio desarrollada en Rust utilizando egui, diseñada
 
 ## Tecnologías Utilizadas
 
-- Rust: Lenguaje principal orientado al rendimiento y la seguridad en memoria.
+- **Rust**: Lenguaje principal orientado al rendimiento y la seguridad en memoria.
 
-- egui: Biblioteca de interfaz gráfica (GUI) multiplataforma de modo inmediato para Rust.
+- **egui**: Biblioteca de interfaz gráfica (GUI) multiplataforma de modo inmediato para Rust.
 
 ## Requisitos Previos
 
