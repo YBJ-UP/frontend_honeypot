@@ -11,7 +11,7 @@ use crate::{
     App,
     api::get_json,
     model::attacks::{Attack, AttackSort, StatusFilter},
-    view::widgets::{severity_color, type_label},
+    view::widgets::{fmt_duration, fmt_ts, severity_color, type_label},
 };
 
 const AUTO_REFRESH: Duration = Duration::from_secs(10);
@@ -70,7 +70,10 @@ pub fn attacks_view(app: &mut App, ui: &mut egui::Ui) {
                 || a.ip.to_lowercase().contains(&needle)
                 || a.sensor.to_lowercase().contains(&needle)
                 || a.attack_type.to_lowercase().contains(&needle)
-                || type_label(&a.attack_type).to_lowercase().contains(&needle)
+                || label_of(a).to_lowercase().contains(&needle)
+                || a.country
+                    .as_deref()
+                    .is_some_and(|c| c.to_lowercase().contains(&needle))
         })
         .collect();
     sort_rows(&mut rows, app.attack.sort, app.attack.sort_asc);
@@ -109,22 +112,25 @@ pub fn attacks_view(app: &mut App, ui: &mut egui::Ui) {
         .striped(true)
         .resizable(false)
         .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
-        .column(Column::initial(60.0)) // ID
-        .column(Column::initial(130.0)) // IP
-        .column(Column::initial(110.0)) // Sensor
-        .column(Column::initial(150.0)) // Tipo
-        .column(Column::initial(90.0)) // Severidad
-        .column(Column::initial(90.0)) // Estado
+        .column(Column::initial(45.0)) // ID
+        .column(Column::initial(115.0)) // IP
+        .column(Column::initial(105.0)) // Sensor
+        .column(Column::initial(95.0)) // Tipo
+        .column(Column::initial(75.0)) // Severidad
+        .column(Column::initial(75.0)) // Estado
+        .column(Column::initial(60.0)) // Eventos
         .column(Column::remainder()) // Inicio
         .min_scrolled_height(0.0)
         .header(26.0, |mut header| {
             header.col(|ui| sort_header(ui, "ID", AttackSort::Id, &mut sort, &mut asc));
-            header.col(|ui| sort_header(ui, "IP atacante", AttackSort::Ip, &mut sort, &mut asc));
+            header.col(|ui| sort_header(ui, "IP", AttackSort::Ip, &mut sort, &mut asc));
             header.col(|ui| sort_header(ui, "Sensor", AttackSort::Sensor, &mut sort, &mut asc));
             header.col(|ui| sort_header(ui, "Tipo", AttackSort::Type, &mut sort, &mut asc));
-            header
-                .col(|ui| sort_header(ui, "Severidad", AttackSort::Severity, &mut sort, &mut asc));
+            header.col(|ui| sort_header(ui, "Sev.", AttackSort::Severity, &mut sort, &mut asc));
             header.col(|ui| sort_header(ui, "Estado", AttackSort::Status, &mut sort, &mut asc));
+            header.col(|ui| {
+                ui.strong("Eventos");
+            });
             header.col(|ui| {
                 ui.strong("Inicio");
             });
@@ -137,13 +143,16 @@ pub fn attacks_view(app: &mut App, ui: &mut egui::Ui) {
                     ui.label(a.id.to_string());
                 });
                 row.col(|ui| {
-                    ui.label(&a.ip);
+                    ui.label(&a.ip).on_hover_text(format!(
+                        "País: {}",
+                        a.country.as_deref().unwrap_or("desconocido")
+                    ));
                 });
                 row.col(|ui| {
                     ui.label(&a.sensor);
                 });
                 row.col(|ui| {
-                    ui.label(type_label(&a.attack_type));
+                    ui.label(label_of(a));
                 });
                 row.col(|ui| {
                     let color = severity_color(a.severity, ui.visuals().text_color());
@@ -151,13 +160,32 @@ pub fn attacks_view(app: &mut App, ui: &mut egui::Ui) {
                 });
                 row.col(|ui| status_badge(ui, &a.status));
                 row.col(|ui| {
-                    ui.label(a.started_at.as_deref().unwrap_or("—"));
+                    ui.label(a.event_count.to_string());
+                });
+                row.col(|ui| {
+                    let mut hover = format!("Último evento: {}", fmt_ts(a.last_seen));
+                    if let Some(d) = a.duration {
+                        hover.push_str(&format!("\nDuración: {}", fmt_duration(d)));
+                    }
+                    if let Some(t) = a.closed_at {
+                        hover.push_str(&format!("\nCerrado: {}", fmt_ts(t)));
+                    }
+                    ui.label(fmt_ts(a.first_seen)).on_hover_text(hover);
                 });
             });
         });
 
     app.attack.sort = sort;
     app.attack.sort_asc = asc;
+}
+
+/// Etiqueta del servidor ("Intrusión"); si viniera vacía, una formateada localmente.
+fn label_of(a: &Attack) -> String {
+    if a.type_label.is_empty() {
+        type_label(&a.attack_type)
+    } else {
+        a.type_label.clone()
+    }
 }
 
 fn header(app: &mut App, ui: &mut egui::Ui) {
@@ -180,7 +208,7 @@ fn filters(app: &mut App, ui: &mut egui::Ui) {
     ui.horizontal(|ui| {
         ui.add(
             egui::TextEdit::singleline(&mut app.attack.search)
-                .hint_text("Buscar IP, sensor o tipo")
+                .hint_text("Buscar IP, sensor, tipo o país")
                 .desired_width(220.0),
         );
 

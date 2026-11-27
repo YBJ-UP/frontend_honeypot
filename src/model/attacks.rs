@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use serde_json::{Map, Value};
 use std::{sync::mpsc::Receiver, time::Instant};
 
 #[derive(Debug, Deserialize, Clone, Default)]
@@ -6,11 +7,25 @@ pub struct Attack {
     pub id: i32,
     pub status: String,
     pub sensor: String,
+    #[serde(rename = "src_ip")]
     pub ip: String,
     #[serde(rename = "type")]
     pub attack_type: String,
+    #[serde(default)]
+    pub type_label: String,
     pub severity: u8,
-    pub started_at: Option<String>,
+    #[serde(default)]
+    pub country: Option<String>,
+    pub first_seen: f64,
+    pub last_seen: f64,
+    #[serde(default)]
+    pub closed_at: Option<f64>,
+    #[serde(default)]
+    pub event_count: u32,
+    #[serde(default)]
+    pub duration: Option<f64>,
+    #[serde(default)]
+    pub summary: Map<String, Value>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
